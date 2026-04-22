@@ -602,7 +602,7 @@ Reglas:
 - Los campos titulos_licenciados_validos y titulos_profesionales_validos deben tener MÁXIMO 6 ejemplos relevantes al área del usuario.`;
 
   try {
-const GEMINI_KEY = 'AIzaSyAT7xs2wkqifgWE2uO_ZDswnzleJnKYfK4';  // ← pon tu clave aquí
+const GEMINI_KEY = 'AIzaSyBeGUNZGhqQLAu11M-tftwjX9rc0Quxer8';  //
 const res = await fetch(
   `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,
   {
@@ -617,8 +617,9 @@ const res = await fetch(
 const data = await res.json();
 if (data.error) throw new Error('Error: ' + data.error.message);
 const texto = data.candidates[0].content.parts[0].text;
-    const limpio = texto.replace(/```json|```/g,'').trim();
-    const r = JSON.parse(limpio);
+    const match = texto.match(/\{[\s\S]*\}/);
+if (!match) throw new Error("Gemini no devolvió un JSON válido");
+const r = JSON.parse(match[0]);
     mostrarResultado(r, titulo);
   } catch(err) {
     mostrarError();
